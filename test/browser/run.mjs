@@ -102,6 +102,17 @@ const viewerText = (p, selector) => p.evaluate((sel) => {
   await close();
 }
 {
+  // v1alpha2 iteration (spec 5.6.4): marker in the graph, badge and description on the step card.
+  const { p, errors, close } = await page('viewer.html?url=examples/image-review.workflow.yaml');
+  await p.waitForFunction(() => document.querySelector('awp-viewer')?.shadowRoot?.querySelector('.title'));
+  check((await viewerText(p, '.node.for-each .node-each')).join() === 'each ≤20', 'iterating step shows its bound in the graph');
+  const label = await p.evaluate(() => document.querySelector('awp-viewer').shadowRoot.querySelector('.node.for-each').getAttribute('aria-label'));
+  check(label.includes('runs once per item of steps.images.outputs.refs, at most 20 items, 2 at a time'), 'iterating step has an accessible description');
+  check((await viewerText(p, '.badge.for-each')).length === 1, 'step card has a for-each badge');
+  check(errors.length === 0, 'viewer renders v1alpha2 without errors');
+  await close();
+}
+{
   const { p, errors, close } = await page('embed.html');
   await p.waitForFunction(() => document.querySelector('awp-viewer')?.shadowRoot?.querySelector('.title'));
   check(errors.length === 0, 'embed page renders the live example without errors');
@@ -110,7 +121,7 @@ const viewerText = (p, selector) => p.evaluate((sel) => {
 
 // 3. Accessibility of every page in both colour schemes (axe needs an inline script: bypass CSP).
 for (const colorScheme of ['light', 'dark']) {
-  for (const path of ['', 'viewer.html?url=examples/vulnerability-fixer.workflow.yaml', 'embed.html']) {
+  for (const path of ['', 'viewer.html?url=examples/vulnerability-fixer.workflow.yaml', 'viewer.html?url=examples/image-review.workflow.yaml', 'embed.html']) {
     const context = await browser.newContext({ colorScheme, bypassCSP: true });
     const p = await context.newPage();
     await p.goto(base + path);

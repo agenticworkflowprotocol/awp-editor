@@ -61,6 +61,7 @@ pre { margin: 0; white-space: pre-wrap; word-break: break-word; background: var(
 .badge.warn { color: var(--awp-warn); background: var(--awp-warn-bg); border-color: var(--awp-warn); }
 .badge.kind { color: var(--awp-accent); border-color: var(--awp-accent); background: transparent; }
 .badge.ext { font-family: var(--awp-mono); font-weight: 500; }
+.badge.for-each { color: var(--awp-accent); border-color: var(--awp-accent); background: transparent; }
 .badge + .badge { margin-left: 0.3rem; }
 
 .section { margin-top: 1.5rem; }
@@ -95,6 +96,9 @@ h3 button.link { font-weight: 700; }
 .node-title { font-weight: 700; font-size: 13px; fill: var(--awp-fg); }
 .node-sub { font-size: 11.5px; fill: var(--awp-muted); font-family: var(--awp-mono); }
 .node-alert { fill: var(--awp-bad); }
+/* Iterating step (spec 5.6.4): stacked cards and a bound such as "each ≤20". */
+.node-stack { fill: var(--awp-panel); stroke: var(--awp-line); stroke-width: 1.5; }
+.node-each { font-size: 11px; font-weight: 600; fill: var(--awp-accent); font-family: var(--awp-mono); }
 
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 0.75rem; }
 .card { border: 1px solid var(--awp-line); border-radius: 6px; padding: 0.6rem 0.8rem; min-width: 0; }

@@ -61,7 +61,19 @@ function stepOf(s, i) {
     image: str(s.image),
     env: isObj(s.env) ? s.env : undefined,
     approval: isObj(s.approval) ? s.approval : undefined,
+    forEach: forEachOf(s.forEach),
     extensions: Object.keys(s).filter((k) => k.startsWith('x-')),
+  };
+}
+/** Iteration of a step (v1alpha2, spec 5.6.4): what the list is, its bound and the concurrency. */
+function forEachOf(f) {
+  if (!isObj(f)) return undefined;
+  // `${{ steps.images.outputs.refs }}` -> `steps.images.outputs.refs`
+  const items = str(f.items)?.replace(/^\$\{\{\s*|\s*\}\}$/g, '');
+  return {
+    items: items ?? '?',
+    maxItems: typeof f.maxItems === 'number' ? f.maxItems : undefined,
+    concurrency: typeof f.concurrency === 'number' ? f.concurrency : 1,
   };
 }
 

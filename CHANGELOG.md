@@ -4,6 +4,20 @@ All notable changes are documented in this file. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-11-19
+
+### Added
+
+- AWP `v1alpha2` step iteration (`forEach`, spec 5.6.4): the view model carries `forEach`
+  (`items`, `maxItems`, `concurrency`); the step graph draws an iterating step as stacked cards
+  with its bound (for example `each ≤20`) and describes it in the accessible name; the step card
+  gets a "for each" badge and a "For each" fact.
+
+### Changed
+
+- Requires `@agenticworkflowprotocol/validator` 0.2.0 (both API versions, schema chosen by
+  `apiVersion`); examples, provenance and starter manifest come from `v1alpha2`.
+
 ## [0.1.1] - 2026-11-19
 
 ### Changed
@@ -30,5 +44,6 @@ All notable changes are documented in this file. The format is based on
 - Tests: view model against the specification examples; browser test in Chrome with the site's
   Content-Security-Policy and axe-core in light and dark mode.
 
+[0.2.0]: https://github.com/agenticworkflowprotocol/awp-editor/releases/tag/v0.2.0
 [0.1.1]: https://github.com/agenticworkflowprotocol/awp-editor/releases/tag/v0.1.1
 [0.1.0]: https://github.com/agenticworkflowprotocol/awp-editor/releases/tag/v0.1.0

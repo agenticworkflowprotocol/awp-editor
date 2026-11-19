@@ -5,16 +5,34 @@ import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
 import { buildModel, combine, decide, layoutSteps, locate, parseSource, pointerAt, shorthandDenials } from '../src/model/index.js';
 
-const examplesDir = fileURLToPath(new URL('../node_modules/@agenticworkflowprotocol/validator/vendor/awp-v1alpha1/spec/v1alpha1/examples/', import.meta.url));
-const example = (name) => readFileSync(examplesDir + name, 'utf8');
+const vendorSpec = new URL('../node_modules/@agenticworkflowprotocol/validator/vendor/awp/spec/', import.meta.url);
+const examplesOf = (version) => fileURLToPath(new URL(`${version}/examples/`, vendorSpec));
+const examplesDir = examplesOf('v1alpha1');
+const example = (name, dir = examplesDir) => readFileSync(dir + name, 'utf8');
 
 test('every manifest example of the specification builds a model', () => {
-  const files = readdirSync(examplesDir).filter((f) => /\.(workflow|agent|policy)\.yaml$/.test(f));
-  assert.ok(files.length >= 5);
-  for (const f of files) {
-    const m = buildModel(parse(example(f)));
-    assert.ok(m.kind && m.name, f);
+  for (const version of ['v1alpha1', 'v1alpha2']) {
+    const dir = examplesOf(version);
+    const files = readdirSync(dir).filter((f) => /\.(workflow|agent|policy)\.yaml$/.test(f));
+    assert.ok(files.length >= 5, version);
+    for (const f of files) {
+      const m = buildModel(parse(example(f, dir)));
+      assert.ok(m.kind && m.name, `${version}/${f}`);
+    }
   }
+});
+
+test('image-review (v1alpha2): an iterating step carries its list, bound and concurrency', () => {
+  const m = buildModel(parse(example('image-review.workflow.yaml', examplesOf('v1alpha2'))));
+  const byId = Object.fromEntries(m.steps.map((s) => [s.id, s]));
+  assert.deepEqual(byId.scan.forEach, { items: 'steps.images.outputs.refs', maxItems: 20, concurrency: 2 });
+  assert.equal(byId.images.forEach, undefined);
+  assert.deepEqual(m.graph.nodes.map((n) => n.level), [0, 1, 2]);
+});
+
+test('forEach without concurrency defaults to one item at a time', () => {
+  const m = buildModel({ kind: 'Workflow', metadata: { name: 'x' }, spec: { workflow: [{ id: 'a', agent: 'w', forEach: { items: '${{ inputs.files }}', maxItems: 3 } }] } });
+  assert.deepEqual(m.steps[0].forEach, { items: 'inputs.files', maxItems: 3, concurrency: 1 });
 });
 
 test('vulnerability-fixer: steps, levels, actions and policy shorthands', () => {

@@ -21,6 +21,20 @@ function stepLabel(step) {
   return step.agent ? `agent ${step.agent}` : 'agent';
 }
 
+/** Short marker of an iterating step (spec 5.6.4), for example `each ≤20`. */
+const forEachMark = (f) => `each ≤${f.maxItems ?? '?'}`;
+
+/** Spoken and written description of an iteration, for labels, titles and the step card. */
+function forEachText(f) {
+  return `runs once per item of ${f.items}, at most ${f.maxItems ?? '?'} items, ${f.concurrency} at a time`;
+}
+
+/** Two offset cards behind the node box: the step runs several times. */
+function stackOf(step) {
+  if (!step.forEach) return [];
+  return [6, 3].map((d) => s('rect', { class: 'node-stack', x: d, y: d, width: NODE.width, height: NODE.height, rx: 8 }));
+}
+
 /**
  * @param {object} model
  * @param {{ problemsAt: (pointer: string) => number, select: (pointer: string) => void }} ctx
@@ -37,15 +51,18 @@ export function renderGraph(model, ctx) {
   const nodes = model.graph.nodes.map((n) => {
     const step = steps.get(n.id);
     const problems = ctx.problemsAt(step.pointer);
-    const label = `Step ${step.id}, ${stepLabel(step)}${step.dependsOn.length ? `, after ${step.dependsOn.join(', ')}` : ''}${problems ? `, ${problems} problem${problems === 1 ? '' : 's'}` : ''}`;
+    const iteration = step.forEach ? `, ${forEachText(step.forEach)}` : '';
+    const label = `Step ${step.id}, ${stepLabel(step)}${iteration}${step.dependsOn.length ? `, after ${step.dependsOn.join(', ')}` : ''}${problems ? `, ${problems} problem${problems === 1 ? '' : 's'}` : ''}`;
     const activate = () => ctx.select(step.pointer);
     return s('g', {
-      class: ['node', `type-${step.type}`, problems ? 'has-problems' : null], 'data-pointer': step.pointer, tabindex: 0, role: 'button', 'aria-label': label,
+      class: ['node', `type-${step.type}`, step.forEach ? 'for-each' : null, problems ? 'has-problems' : null], 'data-pointer': step.pointer, tabindex: 0, role: 'button', 'aria-label': label,
       transform: `translate(${n.x} ${n.y})`, onclick: activate, onkeydown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } },
     },
+    stackOf(step),
     s('rect', { class: 'node-box', width: NODE.width, height: NODE.height, rx: 8 }),
     s('text', { class: 'node-title', x: 12, y: 22 }, truncate(step.id, 22)),
-    s('text', { class: 'node-sub', x: 12, y: 41 }, truncate(stepLabel(step), 26)),
+    s('text', { class: 'node-sub', x: 12, y: 41 }, truncate(stepLabel(step), step.forEach ? 17 : 26)),
+    step.forEach ? s('text', { class: 'node-each', x: NODE.width - 10, y: 41, 'text-anchor': 'end' }, forEachMark(step.forEach)) : null,
     problems ? s('circle', { class: 'node-alert', cx: NODE.width - 12, cy: 12, r: 6 }) : null,
     s('title', {}, label));
   });
@@ -59,8 +76,10 @@ export function renderSteps(model, ctx) {
   if (!model.steps.length) return null;
   const cards = model.steps.map((st) => h('article', { class: ['card', ctx.problemsAt(st.pointer) ? 'has-problems' : null], 'data-pointer': st.pointer },
     h('h3', {}, h('button', { type: 'button', class: 'link', onclick: () => ctx.navigate(st.pointer) }, st.id), ' ', badge(TYPE_LABEL[st.type] ?? st.type, `type-${st.type}`),
+      st.forEach ? [' ', badge('for each', 'for-each', 'iteration over a list (spec 5.6.4)')] : null,
       st.extensions.map((x) => badge(x, 'ext', 'extension field (spec 3.3)'))),
     facts([
+      ['For each', st.forEach ? forEachText(st.forEach) : undefined],
       ['Agent', st.agent],
       ['Task', st.task],
       ['Command', st.command ? h('code', {}, st.command) : undefined],

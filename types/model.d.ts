@@ -35,7 +35,12 @@ export interface Model {
   classification?: string;
   risk?: { level?: string; category: string[] };
   agents: { id: string; pointer: string; form: 'inline' | 'reference' | 'remote'; model?: Record<string, string | undefined>; tools: { type: string; server?: string; name?: string; tools: string[] | null }[]; [key: string]: unknown }[];
-  steps: { id: string; pointer: string; type: string; agent?: string; task?: string; dependsOn: string[]; outputs: { name: string }[]; extensions: string[]; [key: string]: unknown }[];
+  steps: {
+    id: string; pointer: string; type: string; agent?: string; task?: string; dependsOn: string[]; outputs: { name: string }[]; extensions: string[];
+    /** Iteration (v1alpha2, spec 5.6.4): `items` without `${{ }}`, for example `steps.images.outputs.refs`. */
+    forEach?: { items: string; maxItems?: number; concurrency: number };
+    [key: string]: unknown;
+  }[];
   graph: { nodes: { id: string; level: number; x: number; y: number }[]; edges: { from: string; to: string }[]; width: number; height: number };
   actions: Action[];
   budgets: { scope: string; pointer: string; budget: Record<string, unknown> }[];

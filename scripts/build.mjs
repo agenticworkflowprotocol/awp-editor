@@ -13,7 +13,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 const validatorDir = join(root, 'node_modules/@agenticworkflowprotocol/validator');
 const validatorPkg = JSON.parse(readFileSync(join(validatorDir, 'package.json'), 'utf8'));
-const provenance = JSON.parse(readFileSync(join(validatorDir, 'vendor/awp-v1alpha1/PROVENANCE.json'), 'utf8'));
+const provenance = JSON.parse(readFileSync(join(validatorDir, 'vendor/awp/PROVENANCE.json'), 'utf8'));
 
 async function bundle(entry, out) {
   const banner = `/*! @agenticworkflowprotocol/editor ${pkg.version} | Apache-2.0 | bundles @agenticworkflowprotocol/validator ${validatorPkg.version} (Apache-2.0), yaml (ISC)${out.includes('editor') ? ', CodeMirror 6 and Lezer (MIT)' : ''} */`;
@@ -40,8 +40,8 @@ function site() {
   mkdirSync(join(out, 'lib'), { recursive: true });
   for (const f of ['awp-viewer.mjs', 'awp-editor.mjs']) cpSync(join(root, 'dist', f), join(out, 'lib', f));
 
-  const examplesDir = join(validatorDir, 'vendor/awp-v1alpha1/spec/v1alpha1/examples');
-  const { nonManifestExamples = [] } = JSON.parse(readFileSync(join(validatorDir, 'vendor/awp-v1alpha1/conformance/index.json'), 'utf8'));
+  const examplesDir = join(validatorDir, 'vendor/awp/spec/v1alpha2/examples');
+  const { nonManifestExamples = [] } = JSON.parse(readFileSync(join(validatorDir, 'vendor/awp/conformance/index.json'), 'utf8'));
   const examples = readdirSync(examplesDir).filter((f) => /\.(ya?ml|json)$/.test(f) && !nonManifestExamples.includes(f)).sort();
   mkdirSync(join(out, 'examples'), { recursive: true });
   for (const f of examples) cpSync(join(examplesDir, f), join(out, 'examples', f));
