@@ -1,8 +1,8 @@
 :host {
-  --awp-bg: #ffffff; --awp-fg: #17202a; --awp-muted: #5b6672; --awp-line: #d5dbe1; --awp-panel: #f5f7f9;
-  --awp-accent: #0b5cad; --awp-bad: #a1161b; --awp-warn: #7a4d00; --awp-active: #fff4bf;
-  --awp-selection: #cfe1f7; --awp-active-line: #eef3f8;
-  --awp-key: #0b5cad; --awp-string: #146c2e; --awp-literal: #8a3ab9;
+  --awp-bg: #ffffff; --awp-fg: #14171a; --awp-muted: #59606a; --awp-line: #e3e6ea; --awp-panel: #f6f7f8;
+  --awp-accent: #0b6b63; --awp-bad: #a1161b; --awp-warn: #7a4d00; --awp-active: #dff5f1;
+  --awp-selection: #c6ece6; --awp-active-line: #eef8f6;
+  --awp-key: #0b6b63; --awp-string: #146c2e; --awp-literal: #8a3ab9;
   --awp-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --awp-editor-height: 40rem;
   display: block;
@@ -15,17 +15,17 @@
 }
 @media (prefers-color-scheme: dark) {
   :host(:not([theme="light"])) {
-    --awp-bg: #12161b; --awp-fg: #e6eaee; --awp-muted: #a9b3bd; --awp-line: #2f3842; --awp-panel: #1a2027;
-    --awp-accent: #7db7f0; --awp-bad: #f3a3a5; --awp-warn: #f0c674; --awp-active: #3a3417;
-    --awp-selection: #27415f; --awp-active-line: #20272f;
-    --awp-key: #7db7f0; --awp-string: #8fd6a2; --awp-literal: #d6a8f5;
+    --awp-bg: #101214; --awp-fg: #f4f5f6; --awp-muted: #b2b7be; --awp-line: #2a2e33; --awp-panel: #181a1d;
+    --awp-accent: #5fd6c8; --awp-bad: #f3a3a5; --awp-warn: #f0c674; --awp-active: #0c3a36;
+    --awp-selection: #164e48; --awp-active-line: #1b2125;
+    --awp-key: #5fd6c8; --awp-string: #8fd6a2; --awp-literal: #d6a8f5;
   }
 }
 :host([theme="dark"]) {
-  --awp-bg: #12161b; --awp-fg: #e6eaee; --awp-muted: #a9b3bd; --awp-line: #2f3842; --awp-panel: #1a2027;
-  --awp-accent: #7db7f0; --awp-bad: #f3a3a5; --awp-warn: #f0c674; --awp-active: #3a3417;
-  --awp-selection: #27415f; --awp-active-line: #20272f;
-  --awp-key: #7db7f0; --awp-string: #8fd6a2; --awp-literal: #d6a8f5;
+  --awp-bg: #101214; --awp-fg: #f4f5f6; --awp-muted: #b2b7be; --awp-line: #2a2e33; --awp-panel: #181a1d;
+  --awp-accent: #5fd6c8; --awp-bad: #f3a3a5; --awp-warn: #f0c674; --awp-active: #0c3a36;
+  --awp-selection: #164e48; --awp-active-line: #1b2125;
+  --awp-key: #5fd6c8; --awp-string: #8fd6a2; --awp-literal: #d6a8f5;
 }
 * { box-sizing: border-box; }
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); height: 100%; }
