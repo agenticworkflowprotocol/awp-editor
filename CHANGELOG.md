@@ -4,6 +4,15 @@ All notable changes are documented in this file. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-11-19
+
+### Changed
+
+- Depends on `@agenticworkflowprotocol/validator` 0.1.0 from the npm registry instead of the release tarball.
+- Viewer and editor use the colours of agenticworkflowprotocol.org (teal accent); embedders can still override the CSS custom properties.
+- Website: AWP logo, favicons, social preview image and shared navigation with the specification site and the validator.
+- Releases are published automatically from `main` with npm provenance.
+
 ## [0.1.0] - 2026-11-19
 
 ### Added
@@ -21,4 +30,5 @@ All notable changes are documented in this file. The format is based on
 - Tests: view model against the specification examples; browser test in Chrome with the site's
   Content-Security-Policy and axe-core in light and dark mode.
 
+[0.1.1]: https://github.com/agenticworkflowprotocol/awp-editor/releases/tag/v0.1.1
 [0.1.0]: https://github.com/agenticworkflowprotocol/awp-editor/releases/tag/v0.1.0

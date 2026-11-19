@@ -39,16 +39,16 @@ policies and runtime rules can still deny an action or require approval at run t
 npm install --save-exact @agenticworkflowprotocol/editor
 ```
 
-Published to npm with provenance by the `publish` workflow. Without registry access, install the
+Every push to `main` with a new `version` in `package.json` is released automatically: tag, GitHub release and npm with provenance (`.github/workflows/publish.yml`). Without registry access, install the
 tarball of a [GitHub release](https://github.com/agenticworkflowprotocol/awp-editor/releases):
 
 ```sh
 npm install --save-exact \
-  https://github.com/agenticworkflowprotocol/awp-editor/releases/download/v0.1.0/agenticworkflowprotocol-editor-0.1.0.tgz
+  https://github.com/agenticworkflowprotocol/awp-editor/releases/download/v0.1.1/agenticworkflowprotocol-editor-0.1.1.tgz
 ```
 
 The release also contains `awp-viewer.mjs` and `awp-editor.mjs` as single files and `SHA256SUMS`.
-The package depends on `@agenticworkflowprotocol/validator` (installed from its release).
+The package depends on `@agenticworkflowprotocol/validator` from npm.
 
 ## Embed
 
@@ -109,6 +109,16 @@ npm run test:browser   # editor, viewer and embed page in Chrome (CSP of site/_h
 
 `dist/site/` is deployed by the Cloudflare Pages project `awp-editor` (build command
 `npm ci && npm run build`, output directory in `wrangler.toml`).
+
+## Releasing
+
+1. Set the new `version` in `package.json` (semantic versioning) and add a `## [x.y.z]` section to
+   `CHANGELOG.md`.
+2. Push to `main` (directly or by merging a pull request).
+
+The `publish` workflow runs on every push to `main`. If the version is not on npm yet, it runs the
+tests, tags the commit `vx.y.z`, creates the GitHub release with the artefacts and publishes to npm
+through trusted publishing. Pushes without a new version stop after the check.
 
 ## License
 
