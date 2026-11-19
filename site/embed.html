@@ -15,9 +15,11 @@
     <div class="top-row">
       <a class="brand" href="./">AWP <span>Editor</span></a>
       <nav aria-label="Project">
+        <a href="https://agenticworkflowprotocol.org/">Specification</a>
+        <a href="https://validator.agenticworkflowprotocol.org/">Validator</a>
         <a href="./">Editor</a>
         <a href="viewer.html">Viewer</a>
-        <a href="https://agenticworkflowprotocol.org/">Specification</a>
+        <a href="embed.html" aria-current="page">Embed</a>
         <a href="https://github.com/agenticworkflowprotocol/awp-editor">GitHub</a>
       </nav>
     </div>
@@ -27,8 +29,7 @@
     <p>Both are standard Web Components. They work in any framework (React, Vue, Angular, plain HTML), render into their own Shadow DOM, need no external resources and run under a Content-Security-Policy without <code>unsafe-inline</code> or <code>unsafe-eval</code>. Manifests are validated in the browser with the <a href="https://github.com/agenticworkflowprotocol/awp-validator">AWP validator</a> {{validatorVersion}}.</p>
 
     <h2>Install</h2>
-<pre tabindex="0" role="region" aria-label="Install command"><code>npm install --save-exact \
-  https://github.com/agenticworkflowprotocol/awp-editor/releases/download/v{{version}}/agenticworkflowprotocol-editor-{{version}}.tgz</code></pre>
+<pre tabindex="0" role="region" aria-label="Install command"><code>npm install --save-exact @agenticworkflowprotocol/editor</code></pre>
     <p>Each <a href="https://github.com/agenticworkflowprotocol/awp-editor/releases">release</a> also contains <code>awp-viewer.mjs</code> and <code>awp-editor.mjs</code> as single files to host yourself.</p>
 
     <h2>Viewer (read-only, like Swagger UI)</h2>

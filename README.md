@@ -33,8 +33,12 @@ policies and runtime rules can still deny an action or require approval at run t
 
 ## Install
 
-Until the package is on the npm registry, install it from a
-[GitHub release](https://github.com/agenticworkflowprotocol/awp-editor/releases):
+```sh
+npm install --save-exact @agenticworkflowprotocol/editor
+```
+
+Published to npm with provenance by the `publish` workflow. Without registry access, install the
+tarball of a [GitHub release](https://github.com/agenticworkflowprotocol/awp-editor/releases):
 
 ```sh
 npm install --save-exact \

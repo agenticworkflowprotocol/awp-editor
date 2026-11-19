@@ -24,7 +24,8 @@ code, pre { font-family: var(--mono); font-size: 0.875rem; }
 .brand span { color: var(--accent); }
 .top nav { display: flex; gap: 1.1rem; flex-wrap: wrap; }
 .top nav a { text-decoration: none; }
-.top nav a:hover { text-decoration: underline; }
+.top nav a:hover, .top nav a[aria-current] { text-decoration: underline; }
+.top nav a[aria-current] { font-weight: 600; }
 
 .button {
   display: inline-block; font: inherit; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-align: center; white-space: nowrap;
