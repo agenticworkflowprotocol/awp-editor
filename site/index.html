@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AWP Editor</title>
+  <meta name="description" content="Write and review Agentic Workflow Protocol (AWP) manifests: YAML editor with live validation next to a viewer for steps, agents, tools, permissions, approvals and budgets. Runs in your browser.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body class="app">
+  <a class="skip" href="#editor">Skip to the editor</a>
+  <header class="top">
+    <div class="top-row">
+      <a class="brand" href="./">AWP <span>Editor</span></a>
+      <nav aria-label="Project">
+        <a href="viewer.html">Viewer</a>
+        <a href="embed.html">Embed</a>
+        <a href="https://validator.agenticworkflowprotocol.org/">Validator</a>
+        <a href="https://agenticworkflowprotocol.org/">Specification</a>
+        <a href="https://github.com/agenticworkflowprotocol/awp-editor">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1 class="sr-only">AWP manifest editor</h1>
+    <div class="toolbar" role="toolbar" aria-label="Editor actions">
+      <label class="sr-only" for="example">Load an example</label>
+      <select id="example">
+        <option value="">Load an example…</option>
+      </select>
+      <label class="button secondary" for="file">Open file</label>
+      <input id="file" type="file" accept=".yaml,.yml,.json,text/yaml,application/json" class="sr-only">
+      <button type="button" class="button secondary" id="download-yaml">Download YAML</button>
+      <button type="button" class="button secondary" id="download-json">Download JSON</button>
+      <button type="button" class="button secondary" id="share" title="Copies a link that contains the manifest in the URL fragment; it is not sent to any server.">Copy share link</button>
+      <label for="profiles">Profiles</label>
+      <select id="profiles">
+        <option value="">all profiles</option>
+        <option value="core">core</option>
+        <option value="core,mcp">core, mcp</option>
+        <option value="core,governance,mcp">core, governance, mcp</option>
+        <option value="core,governance,audit,mcp">core, governance, audit, mcp</option>
+      </select>
+      <span id="status" class="status" role="status" aria-live="polite"></span>
+    </div>
+    <awp-editor id="editor"></awp-editor>
+    <p class="note">Everything runs in your browser; the manifest is not uploaded. Editor {{version}} · validator {{validatorVersion}} · AWP v1alpha1 (specification <code>{{specCommit}}</code>).</p>
+  </main>
+</body>
+</html>

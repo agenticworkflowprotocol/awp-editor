@@ -1,0 +1,45 @@
+:host {
+  --awp-bg: #ffffff; --awp-fg: #17202a; --awp-muted: #5b6672; --awp-line: #d5dbe1; --awp-panel: #f5f7f9;
+  --awp-accent: #0b5cad; --awp-bad: #a1161b; --awp-warn: #7a4d00; --awp-active: #fff4bf;
+  --awp-selection: #cfe1f7; --awp-active-line: #eef3f8;
+  --awp-key: #0b5cad; --awp-string: #146c2e; --awp-literal: #8a3ab9;
+  --awp-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --awp-editor-height: 40rem;
+  display: block;
+  height: var(--awp-editor-height);
+  color: var(--awp-fg);
+  background: var(--awp-bg);
+  border: 1px solid var(--awp-line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+@media (prefers-color-scheme: dark) {
+  :host(:not([theme="light"])) {
+    --awp-bg: #12161b; --awp-fg: #e6eaee; --awp-muted: #a9b3bd; --awp-line: #2f3842; --awp-panel: #1a2027;
+    --awp-accent: #7db7f0; --awp-bad: #f3a3a5; --awp-warn: #f0c674; --awp-active: #3a3417;
+    --awp-selection: #27415f; --awp-active-line: #20272f;
+    --awp-key: #7db7f0; --awp-string: #8fd6a2; --awp-literal: #d6a8f5;
+  }
+}
+:host([theme="dark"]) {
+  --awp-bg: #12161b; --awp-fg: #e6eaee; --awp-muted: #a9b3bd; --awp-line: #2f3842; --awp-panel: #1a2027;
+  --awp-accent: #7db7f0; --awp-bad: #f3a3a5; --awp-warn: #f0c674; --awp-active: #3a3417;
+  --awp-selection: #27415f; --awp-active-line: #20272f;
+  --awp-key: #7db7f0; --awp-string: #8fd6a2; --awp-literal: #d6a8f5;
+}
+* { box-sizing: border-box; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); height: 100%; }
+.code { min-width: 0; min-height: 0; border-right: 1px solid var(--awp-line); }
+.code .cm-editor { height: 100%; }
+.preview { min-width: 0; min-height: 0; overflow: auto; }
+:host([layout="editor"]) .layout { grid-template-columns: 1fr; }
+:host([layout="editor"]) .preview { display: none; }
+:host([layout="viewer"]) .layout { grid-template-columns: 1fr; }
+:host([layout="viewer"]) .code { display: none; }
+:host([layout="stacked"]) .layout { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); }
+:host([layout="stacked"]) .code { border-right: 0; border-bottom: 1px solid var(--awp-line); }
+@media (max-width: 800px) {
+  :host(:not([layout])) { height: auto; }
+  :host(:not([layout])) .layout { grid-template-columns: 1fr; }
+  :host(:not([layout])) .code { height: 26rem; border-right: 0; border-bottom: 1px solid var(--awp-line); }
+}

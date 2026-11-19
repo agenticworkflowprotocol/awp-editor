@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Embed the AWP Viewer and Editor</title>
+  <meta name="description" content="Embed the AWP viewer or editor in your application, documentation or developer portal with one script and one HTML element.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="lib/awp-viewer.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#content">Skip to the content</a>
+  <header class="top">
+    <div class="top-row">
+      <a class="brand" href="./">AWP <span>Editor</span></a>
+      <nav aria-label="Project">
+        <a href="./">Editor</a>
+        <a href="viewer.html">Viewer</a>
+        <a href="https://agenticworkflowprotocol.org/">Specification</a>
+        <a href="https://github.com/agenticworkflowprotocol/awp-editor">GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <main id="content" class="wrap prose">
+    <h1>Embed the viewer and the editor</h1>
+    <p>Both are standard Web Components. They work in any framework (React, Vue, Angular, plain HTML), render into their own Shadow DOM, need no external resources and run under a Content-Security-Policy without <code>unsafe-inline</code> or <code>unsafe-eval</code>. Manifests are validated in the browser with the <a href="https://github.com/agenticworkflowprotocol/awp-validator">AWP validator</a> {{validatorVersion}}.</p>
+
+    <h2>Install</h2>
+<pre tabindex="0" role="region" aria-label="Install command"><code>npm install --save-exact \
+  https://github.com/agenticworkflowprotocol/awp-editor/releases/download/v{{version}}/agenticworkflowprotocol-editor-{{version}}.tgz</code></pre>
+    <p>Each <a href="https://github.com/agenticworkflowprotocol/awp-editor/releases">release</a> also contains <code>awp-viewer.mjs</code> and <code>awp-editor.mjs</code> as single files to host yourself.</p>
+
+    <h2>Viewer (read-only, like Swagger UI)</h2>
+<pre tabindex="0" role="region" aria-label="Viewer example"><code>&lt;script type="module" src="/assets/awp-viewer.mjs"&gt;&lt;/script&gt;
+&lt;awp-viewer src="/workflows/vulnerability-fixer.yaml" profiles="core,governance,mcp"&gt;&lt;/awp-viewer&gt;</code></pre>
+    <p>Or from a bundler: <code>import '@agenticworkflowprotocol/editor/viewer';</code> and set the content from code:</p>
+<pre tabindex="0" role="region" aria-label="Viewer from code"><code>const viewer = document.querySelector('awp-viewer');
+viewer.text = yamlText;          // YAML or JSON, several documents allowed
+viewer.manifest = parsedObject;  // or an already parsed manifest
+viewer.addEventListener('awp-navigate', (e) =&gt; console.log(e.detail.pointer, e.detail.line));</code></pre>
+
+    <h2>Editor</h2>
+<pre tabindex="0" role="region" aria-label="Editor example"><code>&lt;script type="module" src="/assets/awp-editor.mjs"&gt;&lt;/script&gt;
+&lt;awp-editor src="/workflows/vulnerability-fixer.yaml" profiles="core,mcp"&gt;&lt;/awp-editor&gt;
+
+&lt;script type="module"&gt;
+  const editor = document.querySelector('awp-editor');
+  editor.addEventListener('change', (e) =&gt; save(e.detail.value, e.detail.documents));
+&lt;/script&gt;</code></pre>
+
+    <h2>Attributes</h2>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Attributes">
+      <table>
+        <thead><tr><th scope="col">Attribute</th><th scope="col">Element</th><th scope="col">Meaning</th></tr></thead>
+        <tbody>
+          <tr><th scope="row"><code>src</code></th><td>both</td><td>URL of a manifest to load (fetched without credentials).</td></tr>
+          <tr><th scope="row"><code>profiles</code></th><td>both</td><td>Conformance profiles the host supports, comma-separated. Fields of other profiles are reported as errors. Default: all.</td></tr>
+          <tr><th scope="row"><code>theme</code></th><td>both</td><td><code>light</code> or <code>dark</code>; default follows the system.</td></tr>
+          <tr><th scope="row"><code>no-validate</code></th><td>viewer</td><td>Show the manifest without validation.</td></tr>
+          <tr><th scope="row"><code>layout</code></th><td>editor</td><td><code>split</code> (default), <code>stacked</code>, <code>editor</code> or <code>viewer</code>.</td></tr>
+          <tr><th scope="row"><code>readonly</code></th><td>editor</td><td>Code cannot be edited.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Colours can be changed with CSS custom properties on the element, for example <code>awp-viewer { --awp-accent: #8a3ab9; }</code>, and the editor height with <code>--awp-editor-height</code>. Parts: <code>::part(header)</code>, <code>::part(section)</code>, <code>::part(viewer)</code>, <code>::part(code)</code>.</p>
+
+    <h2>Live example</h2>
+    <awp-viewer src="examples/invoice-processing.workflow.yaml"></awp-viewer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AWP Viewer</title>
+  <meta name="description" content="Read-only view of an Agentic Workflow Protocol (AWP) manifest: steps, agents, tools, permissions, approvals and budgets.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="viewer-page.js"></script>
+</head>
+<body>
+  <a class="skip" href="#viewer">Skip to the manifest</a>
+  <header class="top">
+    <div class="top-row">
+      <a class="brand" href="./">AWP <span>Viewer</span></a>
+      <nav aria-label="Project">
+        <a href="./">Editor</a>
+        <a href="embed.html">Embed</a>
+        <a href="https://agenticworkflowprotocol.org/">Specification</a>
+        <a href="https://github.com/agenticworkflowprotocol/awp-editor">GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <h1>View an AWP manifest</h1>
+    <form id="form" class="url-form">
+      <label for="url">Manifest URL (HTTPS, must allow cross-origin requests)</label>
+      <div class="row">
+        <input id="url" type="url" inputmode="url" placeholder="https://example.com/workflow.yaml" autocomplete="url">
+        <button class="button" type="submit">Show</button>
+        <label class="sr-only" for="example">Or pick an example</label>
+        <select id="example"><option value="">or pick an example…</option></select>
+      </div>
+      <p class="hint">Opening <code>viewer.html?url=…</code> shows a manifest directly. The file is fetched by your browser; nothing is sent to this site.</p>
+    </form>
+    <awp-viewer id="viewer"></awp-viewer>
+  </main>
+</body>
+</html>

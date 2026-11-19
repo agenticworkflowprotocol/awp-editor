@@ -1,0 +1,73 @@
+{
+  "name": "@agenticworkflowprotocol/editor",
+  "version": "0.1.0",
+  "description": "Viewer and editor for Agentic Workflow Protocol (AWP) manifests: step graph, agents, tools, permissions, approvals and budgets at a glance, with live validation. Embeddable like Swagger UI; runs entirely in the browser.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "homepage": "https://editor.agenticworkflowprotocol.org",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agenticworkflowprotocol/awp-editor.git"
+  },
+  "bugs": "https://github.com/agenticworkflowprotocol/awp-editor/issues",
+  "keywords": [
+    "awp",
+    "agentic-workflows",
+    "editor",
+    "viewer",
+    "yaml",
+    "web-components",
+    "ai-governance"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "types": "./types/index.d.ts",
+  "exports": {
+    "./viewer": {
+      "types": "./types/index.d.ts",
+      "default": "./dist/awp-viewer.mjs"
+    },
+    "./editor": {
+      "types": "./types/index.d.ts",
+      "default": "./dist/awp-editor.mjs"
+    },
+    "./model": {
+      "types": "./types/model.d.ts",
+      "default": "./src/model/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/*.mjs",
+    "dist/*.mjs.map",
+    "src/",
+    "types/",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/build.mjs && node --test test/*.test.js",
+    "test:browser": "node test/browser/run.mjs",
+    "prepack": "node scripts/build.mjs"
+  },
+  "dependencies": {
+    "@agenticworkflowprotocol/validator": "https://github.com/agenticworkflowprotocol/awp-validator/releases/download/v0.1.0/agenticworkflowprotocol-validator-0.1.0.tgz",
+    "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "@codemirror/commands": "6.11.1",
+    "@codemirror/lang-yaml": "6.1.3",
+    "@codemirror/language": "6.13.1",
+    "@codemirror/lint": "6.9.8",
+    "@codemirror/search": "6.7.2",
+    "@codemirror/state": "6.7.6",
+    "@codemirror/view": "6.43.15",
+    "@lezer/highlight": "1.2.5",
+    "axe-core": "4.11.0",
+    "esbuild": "0.28.2",
+    "playwright-core": "1.56.0"
+  }
+}
