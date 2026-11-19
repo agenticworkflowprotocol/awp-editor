@@ -5,7 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AWP Editor</title>
   <meta name="description" content="Write and review Agentic Workflow Protocol (AWP) manifests: YAML editor with live validation next to a viewer for steps, agents, tools, permissions, approvals and budgets. Runs in your browser.">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="brand/favicon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="brand/favicon-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="favicon.ico" sizes="48x48">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Agentic Workflow Protocol">
+  <meta property="og:title" content="AWP Editor">
+  <meta property="og:description" content="Write and review Agentic Workflow Protocol (AWP) manifests: YAML editor with live validation next to a viewer for steps, agents, tools, permissions, approvals and budgets. Runs in your browser.">
+  <meta property="og:image" content="https://editor.agenticworkflowprotocol.org/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="AWP – Agentic Workflow Protocol">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="stylesheet" href="style.css">
   <script type="module" src="app.js"></script>
 </head>
@@ -13,7 +24,7 @@
   <a class="skip" href="#editor">Skip to the editor</a>
   <header class="top">
     <div class="top-row">
-      <a class="brand" href="./">AWP <span>Editor</span></a>
+      <a class="brand" href="./"><picture><source media="(prefers-color-scheme: dark)" srcset="brand/awp-icon-dark.svg"><img class="logo" src="brand/awp-icon-light.svg" width="30" height="30" alt=""></picture>AWP <span>Editor</span></a>
       <nav aria-label="Project">
         <a href="https://agenticworkflowprotocol.org/">Specification</a>
         <a href="https://validator.agenticworkflowprotocol.org/">Validator</a>

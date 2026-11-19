@@ -22,6 +22,8 @@ code, pre { font-family: var(--mono); font-size: 0.875rem; }
 .top-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; min-height: 3.25rem; padding: 0 1.25rem; }
 .brand { font-weight: 700; font-size: 1.1rem; text-decoration: none; color: var(--fg); }
 .brand span { color: var(--accent); }
+.brand { display: inline-flex; align-items: center; gap: 0.5rem; }
+.brand .logo { display: block; width: 30px; height: 30px; }
 .top nav { display: flex; gap: 1.1rem; flex-wrap: wrap; }
 .top nav a { text-decoration: none; }
 .top nav a:hover, .top nav a[aria-current] { text-decoration: underline; }
