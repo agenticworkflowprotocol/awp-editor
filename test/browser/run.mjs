@@ -80,6 +80,12 @@ const viewerText = (p, selector) => p.evaluate((sel) => {
   check((await viewerText(p, '.node')).length === 3, 'example vulnerability-fixer has three steps');
   check((await viewerText(p, '#awp-actions tbody tr')).length > 3, 'tools and permissions table is filled');
 
+  // v1alpha3 (Kubernetes resource model): an example from the subfolder, version from spec, valid.
+  await p.selectOption('#example', 'v1alpha3/vulnerability-fixer.workflow.yaml');
+  await p.waitForFunction(() => document.querySelector('awp-editor').shadowRoot.querySelector('awp-viewer').shadowRoot.querySelector('.api')?.textContent.endsWith('/v1alpha3'));
+  check((await viewerText(p, '.title .version')).join().trim() !== '', 'v1alpha3 example shows its version from spec');
+  check((await viewerText(p, '.head .badge')).some((t) => t.startsWith('valid')), 'v1alpha3 example is valid');
+
   await p.click('#share');
   await p.waitForFunction(() => location.hash.startsWith('#m='));
   const shared = await p.evaluate(() => location.href);
@@ -113,6 +119,15 @@ const viewerText = (p, selector) => p.evaluate((sel) => {
   await close();
 }
 {
+  // v1alpha3 WorkflowRun: namespace and referenced workflow in the facts.
+  const { p, errors, close } = await page('viewer.html?url=examples/v1alpha3/vulnerability-fixer.run.yaml');
+  await p.waitForFunction(() => document.querySelector('awp-viewer')?.shadowRoot?.querySelector('.title'));
+  const text = await p.evaluate(() => document.querySelector('awp-viewer').shadowRoot.textContent);
+  check(text.includes('security') && text.includes('vulnerability-fixer@0.1.0'), 'v1alpha3 run shows namespace and workflow');
+  check(errors.length === 0, 'viewer renders v1alpha3 without errors');
+  await close();
+}
+{
   const { p, errors, close } = await page('embed.html');
   await p.waitForFunction(() => document.querySelector('awp-viewer')?.shadowRoot?.querySelector('.title'));
   check(errors.length === 0, 'embed page renders the live example without errors');
@@ -121,7 +136,7 @@ const viewerText = (p, selector) => p.evaluate((sel) => {
 
 // 3. Accessibility of every page in both colour schemes (axe needs an inline script: bypass CSP).
 for (const colorScheme of ['light', 'dark']) {
-  for (const path of ['', 'viewer.html?url=examples/vulnerability-fixer.workflow.yaml', 'viewer.html?url=examples/image-review.workflow.yaml', 'embed.html']) {
+  for (const path of ['', 'viewer.html?url=examples/vulnerability-fixer.workflow.yaml', 'viewer.html?url=examples/image-review.workflow.yaml', 'viewer.html?url=examples/v1alpha3/vulnerability-fixer.run.yaml', 'embed.html']) {
     const context = await browser.newContext({ colorScheme, bypassCSP: true });
     const p = await context.newPage();
     await p.goto(base + path);

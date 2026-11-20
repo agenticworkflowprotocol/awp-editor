@@ -15,7 +15,7 @@ Embeddable like Swagger UI; runs entirely in the browser.
 - **Embed:** two Web Components, `<awp-viewer>` and `<awp-editor>`, for applications, developer
   portals and documentation ([embedding guide](https://editor.agenticworkflowprotocol.org/embed.html)).
 
-Status: alpha, like the specification (AWP `v1alpha1` and `v1alpha2`).
+Status: alpha, like the specification (AWP `v1alpha1`, `v1alpha2` and the proposed `v1alpha3`).
 
 ## What the viewer shows
 
@@ -23,7 +23,7 @@ Status: alpha, like the specification (AWP `v1alpha1` and `v1alpha2`).
 | --- | --- |
 | Header | Kind, name, version, owner, classification, risk, validation status |
 | Problems | Findings of the validator, each linked to its element and line |
-| Workflow | Step graph from `dependsOn` (agent, command and approval steps) |
+| Workflow | Step graph from `dependsOn` (agent, command, approval and human input steps) |
 | Steps, Agents | Task, outputs, timeout, retries; model, tools, instructions |
 | Tools and permissions | Every exposed action with the static decision of `permissions`, policy shorthands and `approval.requiredFor` |
 | Triggers and inputs, Budgets, Governance | Start conditions, nested limits, approval, policies, data and model policy, audit |

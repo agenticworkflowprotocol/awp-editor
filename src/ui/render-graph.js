@@ -2,7 +2,7 @@
 import { NODE } from '../model/index.js';
 import { badge, cell, facts, h, s, section } from './dom.js';
 
-const TYPE_LABEL = { agent: 'agent', command: 'command', approval: 'approval' };
+const TYPE_LABEL = { agent: 'agent', command: 'command', approval: 'approval', input: 'human input' };
 
 function edgePath(from, to) {
   const x1 = from.x + NODE.width / 2;
@@ -18,6 +18,7 @@ const truncate = (text, max) => (text.length > max ? `${text.slice(0, max - 1)}â
 function stepLabel(step) {
   if (step.type === 'command') return step.command ? `$ ${step.command}` : 'command';
   if (step.type === 'approval') return 'human approval';
+  if (step.type === 'input') return 'human input';
   return step.agent ? `agent ${step.agent}` : 'agent';
 }
 
@@ -86,6 +87,7 @@ export function renderSteps(model, ctx) {
       ['Image', st.image],
       ['Environment', st.env],
       ['Approval', st.approval],
+      ['Human input', st.input],
       ['After', st.dependsOn],
       ['Outputs', st.outputs.map((o) => `${o.name}${o.classification ? ` (${o.classification})` : ''}`)],
       ['Timeout', st.timeout],

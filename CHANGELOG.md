@@ -4,7 +4,7 @@ All notable changes are documented in this file. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.0] - 2026-11-19
+## [0.2.0] - 2026-11-20
 
 ### Added
 
@@ -12,11 +12,18 @@ All notable changes are documented in this file. The format is based on
   (`items`, `maxItems`, `concurrency`); the step graph draws an iterating step as stacked cards
   with its bound (for example `each ≤20`) and describes it in the accessible name; the step card
   gets a "for each" badge and a "For each" fact.
+- AWP `v1alpha3` (proposed, Kubernetes resource model): version, owner, classification, risk and
+  integrity are read from `spec` instead of `metadata`; the facts show `metadata.namespace` and,
+  for a `WorkflowRun`, the referenced workflow (`spec.workflowRef`); `type: input` steps appear in
+  the step graph as "human input" with a "Human input" fact; keys of `extensions` objects count as
+  step extensions. New model fields `namespace`, `governancePointer`, `workflowRef` and step `input`.
+- Website: the `v1alpha3` examples under `examples/v1alpha3/`, next to the `v1alpha2` examples.
 
 ### Changed
 
-- Requires `@agenticworkflowprotocol/validator` 0.2.0 (both API versions, schema chosen by
-  `apiVersion`); examples, provenance and starter manifest come from `v1alpha2`.
+- Requires `@agenticworkflowprotocol/validator` 0.2.0 (`v1alpha1`, `v1alpha2` and `v1alpha3`,
+  schema chosen by `apiVersion`); provenance and starter manifest come from `v1alpha2`, the
+  current draft.
 
 ## [0.1.1] - 2026-11-19
 

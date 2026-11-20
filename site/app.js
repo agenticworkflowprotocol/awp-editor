@@ -99,7 +99,7 @@ async function loadExamples() {
 
 $('example').addEventListener('change', async (e) => {
   if (!e.target.value) return;
-  editor.value = await (await fetch(`examples/${encodeURIComponent(e.target.value)}`)).text();
+  editor.value = await (await fetch(`examples/${encodeURI(e.target.value)}`)).text();
   history.replaceState(null, '', location.pathname);
 });
 $('file').addEventListener('change', async (e) => {

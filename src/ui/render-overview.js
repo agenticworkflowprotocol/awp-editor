@@ -10,7 +10,7 @@ export function renderHeader(model, result) {
     : result.valid
       ? badge(warnings ? `valid, ${warnings} warning${warnings === 1 ? '' : 's'}` : 'valid', warnings ? 'warn' : 'ok')
       : badge(`invalid, ${errors} error${errors === 1 ? '' : 's'}`, 'bad');
-  return h('header', { class: 'head', part: 'header', 'data-pointer': '/metadata' },
+  return h('header', { class: 'head', part: 'header', 'data-pointer': model.governancePointer },
     h('div', { class: 'head-row' },
       model.kind ? badge(model.kind, 'kind') : null,
       h('h2', { class: 'title' }, model.name ?? 'Untitled manifest', model.version ? h('span', { class: 'version' }, ` ${model.version}`) : null),
@@ -61,5 +61,12 @@ export function renderTriggersAndInputs(model) {
 }
 
 export function renderMetadataFacts(model) {
-  return facts([['Contact', model.owner.contact], ['Risk categories', model.risk?.category], ['Labels', model.labels]]);
+  const workflow = model.workflowRef ? `${model.workflowRef.name ?? '–'}${model.workflowRef.version ? `@${model.workflowRef.version}` : ''}` : undefined;
+  return facts([
+    ['Namespace', model.namespace],
+    ['Workflow', workflow],
+    ['Contact', model.owner.contact],
+    ['Risk categories', model.risk?.category],
+    ['Labels', model.labels],
+  ]);
 }

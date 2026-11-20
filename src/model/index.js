@@ -61,11 +61,13 @@ function stepOf(s, i) {
     image: str(s.image),
     env: isObj(s.env) ? s.env : undefined,
     approval: isObj(s.approval) ? s.approval : undefined,
+    input: isObj(s.input) ? s.input : undefined,
     forEach: forEachOf(s.forEach),
-    extensions: Object.keys(s).filter((k) => k.startsWith('x-')),
+    // v1alpha1/v1alpha2: x- keys on the step; v1alpha3: keys of the step's `extensions` object.
+    extensions: [...Object.keys(s).filter((k) => k.startsWith('x-')), ...Object.keys(isObj(s.extensions) ? s.extensions : {})],
   };
 }
-/** Iteration of a step (v1alpha2, spec 5.6.4): what the list is, its bound and the concurrency. */
+/** Iteration of a step (v1alpha2 spec 5.6.4, v1alpha3 spec 5.6.5): what the list is, its bound and the concurrency. */
 function forEachOf(f) {
   if (!isObj(f)) return undefined;
   // `${{ steps.images.outputs.refs }}` -> `steps.images.outputs.refs`
@@ -159,6 +161,13 @@ function governanceOf(spec) {
   return keys.filter((k) => spec[k] !== undefined).map((k) => ({ key: k, pointer: `/spec/${k}`, value: spec[k] }));
 }
 
+const KRM_VERSIONS = ['v1alpha3'];
+
+/** Whether the governance fields of a document are in spec (v1alpha3 and later). */
+function usesSpecGovernance(doc) {
+  return typeof doc.apiVersion === 'string' && KRM_VERSIONS.some((v) => doc.apiVersion.endsWith(`/${v}`));
+}
+
 /**
  * Build the view model of one manifest.
  * @param {unknown} manifest parsed manifest
@@ -168,6 +177,9 @@ export function buildModel(manifest) {
   const meta = isObj(doc.metadata) ? doc.metadata : {};
   const spec = isObj(doc.spec) ? doc.spec : {};
   const kind = str(doc.kind);
+  // From v1alpha3 on (Kubernetes resource model) version, owner, classification and the other
+  // governance fields are in spec; metadata holds only name, namespace, labels and annotations.
+  const gov = usesSpecGovernance(doc) ? spec : meta;
 
   // kind: Agent is one agent whose fields are in spec (spec 6).
   const agents = kind === 'Agent' ? [{ ...agentOf({ id: meta.name, ...spec }, 0), pointer: '/spec' }] : list(spec.agents).filter(isObj).map((a, i) => agentOf(a, i));
@@ -178,14 +190,17 @@ export function buildModel(manifest) {
     apiVersion: str(doc.apiVersion),
     kind,
     name: str(meta.name),
-    version: str(meta.version),
-    description: str(meta.description),
-    purpose: str(meta.purpose),
-    owner: owner(meta),
-    classification: str(meta.classification),
-    risk: isObj(meta.risk) ? { level: str(meta.risk.level), category: list(meta.risk.category).map(String) } : undefined,
+    version: str(gov.version),
+    description: str(gov.description),
+    purpose: str(gov.purpose),
+    owner: owner(gov),
+    classification: str(gov.classification),
+    risk: isObj(gov.risk) ? { level: str(gov.risk.level), category: list(gov.risk.category).map(String) } : undefined,
+    namespace: str(meta.namespace),
     labels: isObj(meta.labels) ? meta.labels : undefined,
-    integrity: isObj(meta.integrity) ? meta.integrity : undefined,
+    integrity: isObj(gov.integrity) ? gov.integrity : undefined,
+    governancePointer: gov === spec ? '/spec' : '/metadata',
+    workflowRef: kind === 'WorkflowRun' && isObj(spec.workflowRef) ? spec.workflowRef : undefined,
     triggers: list(spec.triggers).filter(isObj),
     inputs: list(spec.inputs).filter(isObj),
     agents,

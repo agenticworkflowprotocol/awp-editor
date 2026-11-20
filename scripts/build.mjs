@@ -33,6 +33,25 @@ async function bundle(entry, out) {
   });
 }
 
+// Examples on the site: the current draft at examples/<file> (stable URLs), proposed versions
+// under examples/<version>/<file>.
+const EXAMPLE_SETS = [
+  { version: 'v1alpha2', dir: '' },
+  { version: 'v1alpha3', dir: 'v1alpha3/' },
+];
+
+/** Copy the manifest examples of one spec version; returns their paths relative to examples/. */
+function copyExamples({ version, dir }, out) {
+  const awp = join(validatorDir, 'vendor/awp');
+  const source = join(awp, `spec/${version}/examples`);
+  const index = join(awp, `conformance/${version}/index.json`);
+  const { nonManifestExamples = [] } = JSON.parse(readFileSync(index, 'utf8'));
+  const files = readdirSync(source).filter((f) => /\.(ya?ml|json)$/.test(f) && !nonManifestExamples.includes(f)).sort();
+  mkdirSync(join(out, 'examples', dir), { recursive: true });
+  for (const f of files) cpSync(join(source, f), join(out, 'examples', dir, f));
+  return files.map((f) => `${dir}${f}`);
+}
+
 function site() {
   const out = join(root, 'dist/site');
   rmSync(out, { recursive: true, force: true });
@@ -40,11 +59,7 @@ function site() {
   mkdirSync(join(out, 'lib'), { recursive: true });
   for (const f of ['awp-viewer.mjs', 'awp-editor.mjs']) cpSync(join(root, 'dist', f), join(out, 'lib', f));
 
-  const examplesDir = join(validatorDir, 'vendor/awp/spec/v1alpha2/examples');
-  const { nonManifestExamples = [] } = JSON.parse(readFileSync(join(validatorDir, 'vendor/awp/conformance/index.json'), 'utf8'));
-  const examples = readdirSync(examplesDir).filter((f) => /\.(ya?ml|json)$/.test(f) && !nonManifestExamples.includes(f)).sort();
-  mkdirSync(join(out, 'examples'), { recursive: true });
-  for (const f of examples) cpSync(join(examplesDir, f), join(out, 'examples', f));
+  const examples = EXAMPLE_SETS.flatMap((set) => copyExamples(set, out));
   writeFileSync(join(out, 'examples/index.json'), `${JSON.stringify({ examples }, null, 2)}\n`);
 
   for (const page of readdirSync(out).filter((f) => f.endsWith('.html'))) {

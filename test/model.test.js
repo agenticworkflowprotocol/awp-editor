@@ -11,9 +11,9 @@ const examplesDir = examplesOf('v1alpha1');
 const example = (name, dir = examplesDir) => readFileSync(dir + name, 'utf8');
 
 test('every manifest example of the specification builds a model', () => {
-  for (const version of ['v1alpha1', 'v1alpha2']) {
+  for (const version of ['v1alpha1', 'v1alpha2', 'v1alpha3']) {
     const dir = examplesOf(version);
-    const files = readdirSync(dir).filter((f) => /\.(workflow|agent|policy)\.yaml$/.test(f));
+    const files = readdirSync(dir).filter((f) => /\.(workflow|agent|policy|run)\.yaml$/.test(f));
     assert.ok(files.length >= 5, version);
     for (const f of files) {
       const m = buildModel(parse(example(f, dir)));
@@ -28,6 +28,38 @@ test('image-review (v1alpha2): an iterating step carries its list, bound and con
   assert.deepEqual(byId.scan.forEach, { items: 'steps.images.outputs.refs', maxItems: 20, concurrency: 2 });
   assert.equal(byId.images.forEach, undefined);
   assert.deepEqual(m.graph.nodes.map((n) => n.level), [0, 1, 2]);
+});
+
+test('v1alpha3: version, owner, classification and risk are read from spec', () => {
+  const m = buildModel(parse(example('image-review.workflow.yaml', examplesOf('v1alpha3'))));
+  assert.equal(m.version, '0.1.0');
+  assert.deepEqual(m.owner, { team: 'platform-team', contact: undefined });
+  assert.equal(m.classification, 'internal');
+  assert.equal(m.risk.level, 'low');
+  assert.equal(m.governancePointer, '/spec');
+  assert.equal(m.steps.find((s) => s.id === 'scan').forEach.concurrency, 2);
+  // v1alpha2 keeps them in metadata.
+  assert.equal(buildModel(parse(example('image-review.workflow.yaml', examplesOf('v1alpha2')))).governancePointer, '/metadata');
+});
+
+test('v1alpha3: WorkflowRun shows namespace and the referenced workflow', () => {
+  const m = buildModel(parse(example('vulnerability-fixer.run.yaml', examplesOf('v1alpha3'))));
+  assert.equal(m.kind, 'WorkflowRun');
+  assert.equal(m.namespace, 'security');
+  assert.deepEqual(m.workflowRef, { name: 'vulnerability-fixer', version: '0.1.0' });
+});
+
+test('v1alpha3: input steps and extensions objects of steps', () => {
+  const m = buildModel({
+    apiVersion: 'awp.agenticworkflowprotocol.org/v1alpha3',
+    kind: 'Workflow',
+    metadata: { name: 'x' },
+    spec: { workflow: [{ id: 'ask', type: 'input', input: { message: 'Which?' }, extensions: { 'x-step': 1 } }] },
+  });
+  assert.equal(m.steps[0].type, 'input');
+  assert.deepEqual(m.steps[0].input, { message: 'Which?' });
+  assert.deepEqual(m.steps[0].extensions, ['x-step']);
+  assert.deepEqual(m.extensions.map((e) => e.pointer), ['/spec/workflow/0/extensions/x-step']);
 });
 
 test('forEach without concurrency defaults to one item at a time', () => {
