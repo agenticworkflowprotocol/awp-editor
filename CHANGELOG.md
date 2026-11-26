@@ -4,6 +4,19 @@ All notable changes are documented in this file. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-11-25
+
+### Changed
+
+- `v1alpha3` is the current draft (decision D22 of the specification). The website starts with a
+  `v1alpha3` manifest, and `examples/<file>` now serves the `v1alpha3` examples; the `v1alpha2`
+  examples moved to `examples/v1alpha2/<file>`. `examples/v1alpha3/<file>` still works but is no
+  longer listed.
+- The page footer lists the AWP versions of the bundled validator instead of a fixed text.
+- Viewer and editor show `v1alpha1` and `v1alpha2` manifests as before; the browser test now
+  checks a `v1alpha2` example explicitly.
+- Uses `@agenticworkflowprotocol/validator` 0.3.0 (`v1alpha3` as the current draft).
+
 ## [0.2.0] - 2026-11-20
 
 ### Added

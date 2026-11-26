@@ -3,16 +3,16 @@
 import { buildModel, parseYaml as parse } from './lib/awp-editor.mjs';
 import { decodeShare, encodeShare } from './share.js';
 
-const STARTER = `apiVersion: awp.agenticworkflowprotocol.org/v1alpha2
+const STARTER = `apiVersion: awp.agenticworkflowprotocol.org/v1alpha3
 kind: Workflow
 metadata:
   name: hello-workflow
+spec:
   version: 0.1.0
   description: Summarise a ticket and propose a reply.
   owner:
     team: example-team
   classification: internal
-spec:
   inputs:
     - name: ticket
       type: string

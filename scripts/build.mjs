@@ -33,11 +33,14 @@ async function bundle(entry, out) {
   });
 }
 
-// Examples on the site: the current draft at examples/<file> (stable URLs), proposed versions
-// under examples/<version>/<file>.
+// Examples on the site: the current draft (v1alpha3, decision D22 of the specification) at
+// examples/<file>, older versions under examples/<version>/<file>. The current draft is also
+// copied to examples/v1alpha3/ without being listed, so links from the time it was a proposed
+// draft keep working.
 const EXAMPLE_SETS = [
-  { version: 'v1alpha2', dir: '' },
-  { version: 'v1alpha3', dir: 'v1alpha3/' },
+  { version: 'v1alpha3', dir: '' },
+  { version: 'v1alpha2', dir: 'v1alpha2/' },
+  { version: 'v1alpha3', dir: 'v1alpha3/', listed: false },
 ];
 
 /** Copy the manifest examples of one spec version; returns their paths relative to examples/. */
@@ -59,7 +62,10 @@ function site() {
   mkdirSync(join(out, 'lib'), { recursive: true });
   for (const f of ['awp-viewer.mjs', 'awp-editor.mjs']) cpSync(join(root, 'dist', f), join(out, 'lib', f));
 
-  const examples = EXAMPLE_SETS.flatMap((set) => copyExamples(set, out));
+  const examples = EXAMPLE_SETS.flatMap((set) => {
+    const files = copyExamples(set, out);
+    return set.listed === false ? [] : files;
+  });
   writeFileSync(join(out, 'examples/index.json'), `${JSON.stringify({ examples }, null, 2)}\n`);
 
   for (const page of readdirSync(out).filter((f) => f.endsWith('.html'))) {
@@ -67,6 +73,7 @@ function site() {
     writeFileSync(p, readFileSync(p, 'utf8')
       .replaceAll('{{version}}', pkg.version)
       .replaceAll('{{validatorVersion}}', validatorPkg.version)
+      .replaceAll('{{awpVersions}}', [...provenance.awpVersions].reverse().join(', '))
       .replaceAll('{{specCommit}}', provenance.source.commit.slice(0, 7)));
   }
 }
