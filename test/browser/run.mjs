@@ -80,11 +80,16 @@ const viewerText = (p, selector) => p.evaluate((sel) => {
   check((await viewerText(p, '.node')).length === 3, 'example vulnerability-fixer has three steps');
   check((await viewerText(p, '#awp-actions tbody tr')).length > 3, 'tools and permissions table is filled');
 
-  // v1alpha3 (Kubernetes resource model): an example from the subfolder, version from spec, valid.
-  await p.selectOption('#example', 'v1alpha3/vulnerability-fixer.workflow.yaml');
-  await p.waitForFunction(() => document.querySelector('awp-editor').shadowRoot.querySelector('awp-viewer').shadowRoot.querySelector('.api')?.textContent.endsWith('/v1alpha3'));
+  // The examples at the top level are the current draft v1alpha3: version from spec, valid.
+  check((await p.locator('awp-editor').evaluate((el) => el.value)).includes('/v1alpha3'), 'the top-level examples are v1alpha3');
   check((await viewerText(p, '.title .version')).join().trim() !== '', 'v1alpha3 example shows its version from spec');
   check((await viewerText(p, '.head .badge')).some((t) => t.startsWith('valid')), 'v1alpha3 example is valid');
+
+  // Older versions stay supported: a v1alpha2 example from the subfolder, version from metadata, valid.
+  await p.selectOption('#example', 'v1alpha2/vulnerability-fixer.workflow.yaml');
+  await p.waitForFunction(() => document.querySelector('awp-editor').shadowRoot.querySelector('awp-viewer').shadowRoot.querySelector('.api')?.textContent.endsWith('/v1alpha2'));
+  check((await viewerText(p, '.title .version')).join().trim() !== '', 'v1alpha2 example shows its version from metadata');
+  check((await viewerText(p, '.head .badge')).some((t) => t.startsWith('valid')), 'v1alpha2 example is valid');
 
   await p.click('#share');
   await p.waitForFunction(() => location.hash.startsWith('#m='));
@@ -109,7 +114,7 @@ const viewerText = (p, selector) => p.evaluate((sel) => {
 }
 {
   // v1alpha2 iteration (spec 5.6.4): marker in the graph, badge and description on the step card.
-  const { p, errors, close } = await page('viewer.html?url=examples/image-review.workflow.yaml');
+  const { p, errors, close } = await page('viewer.html?url=examples/v1alpha2/image-review.workflow.yaml');
   await p.waitForFunction(() => document.querySelector('awp-viewer')?.shadowRoot?.querySelector('.title'));
   check((await viewerText(p, '.node.for-each .node-each')).join() === 'each ≤20', 'iterating step shows its bound in the graph');
   const label = await p.evaluate(() => document.querySelector('awp-viewer').shadowRoot.querySelector('.node.for-each').getAttribute('aria-label'));
@@ -119,7 +124,8 @@ const viewerText = (p, selector) => p.evaluate((sel) => {
   await close();
 }
 {
-  // v1alpha3 WorkflowRun: namespace and referenced workflow in the facts.
+  // v1alpha3 WorkflowRun: namespace and referenced workflow in the facts. The examples/v1alpha3/
+  // path is kept for links from the time v1alpha3 was a proposed draft.
   const { p, errors, close } = await page('viewer.html?url=examples/v1alpha3/vulnerability-fixer.run.yaml');
   await p.waitForFunction(() => document.querySelector('awp-viewer')?.shadowRoot?.querySelector('.title'));
   const text = await p.evaluate(() => document.querySelector('awp-viewer').shadowRoot.textContent);
@@ -136,7 +142,7 @@ const viewerText = (p, selector) => p.evaluate((sel) => {
 
 // 3. Accessibility of every page in both colour schemes (axe needs an inline script: bypass CSP).
 for (const colorScheme of ['light', 'dark']) {
-  for (const path of ['', 'viewer.html?url=examples/vulnerability-fixer.workflow.yaml', 'viewer.html?url=examples/image-review.workflow.yaml', 'viewer.html?url=examples/v1alpha3/vulnerability-fixer.run.yaml', 'embed.html']) {
+  for (const path of ['', 'viewer.html?url=examples/vulnerability-fixer.workflow.yaml', 'viewer.html?url=examples/v1alpha2/image-review.workflow.yaml', 'viewer.html?url=examples/vulnerability-fixer.run.yaml', 'embed.html']) {
     const context = await browser.newContext({ colorScheme, bypassCSP: true });
     const p = await context.newPage();
     await p.goto(base + path);
