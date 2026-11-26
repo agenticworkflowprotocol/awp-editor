@@ -15,6 +15,7 @@ All notable changes are documented in this file. The format is based on
 - The page footer lists the AWP versions of the bundled validator instead of a fixed text.
 - Viewer and editor show `v1alpha1` and `v1alpha2` manifests as before; the browser test now
   checks a `v1alpha2` example explicitly.
+- Uses `@agenticworkflowprotocol/validator` 0.3.0 (`v1alpha3` as the current draft).
 
 ## [0.2.0] - 2026-11-20
 
