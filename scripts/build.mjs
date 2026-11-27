@@ -33,14 +33,15 @@ async function bundle(entry, out) {
   });
 }
 
-// Examples on the site: the current draft (v1alpha3, decision D22 of the specification) at
+// Examples on the site: the current draft (v1alpha4, decision D24 of the specification) at
 // examples/<file>, older versions under examples/<version>/<file>. The current draft is also
-// copied to examples/v1alpha3/ without being listed, so links from the time it was a proposed
+// copied to examples/v1alpha4/ without being listed, so links from the time it was the next
 // draft keep working.
 const EXAMPLE_SETS = [
-  { version: 'v1alpha3', dir: '' },
+  { version: 'v1alpha4', dir: '' },
+  { version: 'v1alpha3', dir: 'v1alpha3/' },
   { version: 'v1alpha2', dir: 'v1alpha2/' },
-  { version: 'v1alpha3', dir: 'v1alpha3/', listed: false },
+  { version: 'v1alpha4', dir: 'v1alpha4/', listed: false },
 ];
 
 /** Copy the manifest examples of one spec version; returns their paths relative to examples/. */

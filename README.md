@@ -15,7 +15,8 @@ Embeddable like Swagger UI; runs entirely in the browser.
 - **Embed:** two Web Components, `<awp-viewer>` and `<awp-editor>`, for applications, developer
   portals and documentation ([embedding guide](https://editor.agenticworkflowprotocol.org/embed.html)).
 
-Status: alpha, like the specification (AWP `v1alpha3`, the current draft, plus `v1alpha2` and `v1alpha1`).
+Status: alpha, like the specification (AWP `v1alpha4`, the current draft with step conditions and
+workflow steps, plus `v1alpha3`, `v1alpha2` and `v1alpha1`).
 
 ## What the viewer shows
 

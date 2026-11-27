@@ -2,7 +2,7 @@
 import { NODE } from '../model/index.js';
 import { badge, cell, facts, h, s, section } from './dom.js';
 
-const TYPE_LABEL = { agent: 'agent', command: 'command', approval: 'approval', input: 'human input' };
+const TYPE_LABEL = { agent: 'agent', command: 'command', approval: 'approval', input: 'human input', workflow: 'workflow' };
 
 function edgePath(from, to) {
   const x1 = from.x + NODE.width / 2;
@@ -19,6 +19,7 @@ function stepLabel(step) {
   if (step.type === 'command') return step.command ? `$ ${step.command}` : 'command';
   if (step.type === 'approval') return 'human approval';
   if (step.type === 'input') return 'human input';
+  if (step.type === 'workflow') return step.workflow?.ref ? `workflow ${step.workflow.ref}` : 'workflow';
   return step.agent ? `agent ${step.agent}` : 'agent';
 }
 
@@ -28,6 +29,11 @@ const forEachMark = (f) => `each ≤${f.maxItems ?? '?'}`;
 /** Spoken and written description of an iteration, for labels, titles and the step card. */
 function forEachText(f) {
   return `runs once per item of ${f.items}, at most ${f.maxItems ?? '?'} items, ${f.concurrency} at a time`;
+}
+
+/** Spoken and written description of a child workflow call (v1alpha4 spec 5.6.6). */
+function workflowText(w) {
+  return `starts workflow ${w.ref ?? '?'}${w.version ? ` ${w.version}` : ''}, ${w.wait ? 'waits for it to finish' : 'does not wait'}`;
 }
 
 /** Two offset cards behind the node box: the step runs several times. */
@@ -53,17 +59,19 @@ export function renderGraph(model, ctx) {
     const step = steps.get(n.id);
     const problems = ctx.problemsAt(step.pointer);
     const iteration = step.forEach ? `, ${forEachText(step.forEach)}` : '';
-    const label = `Step ${step.id}, ${stepLabel(step)}${iteration}${step.dependsOn.length ? `, after ${step.dependsOn.join(', ')}` : ''}${problems ? `, ${problems} problem${problems === 1 ? '' : 's'}` : ''}`;
+    const condition = step.when ? `, only when ${step.when}` : '';
+    const label = `Step ${step.id}, ${stepLabel(step)}${iteration}${condition}${step.dependsOn.length ? `, after ${step.dependsOn.join(', ')}` : ''}${problems ? `, ${problems} problem${problems === 1 ? '' : 's'}` : ''}`;
     const activate = () => ctx.select(step.pointer);
     return s('g', {
-      class: ['node', `type-${step.type}`, step.forEach ? 'for-each' : null, problems ? 'has-problems' : null], 'data-pointer': step.pointer, tabindex: 0, role: 'button', 'aria-label': label,
+      class: ['node', `type-${step.type}`, step.forEach ? 'for-each' : null, step.when ? 'conditional' : null, problems ? 'has-problems' : null], 'data-pointer': step.pointer, tabindex: 0, role: 'button', 'aria-label': label,
       transform: `translate(${n.x} ${n.y})`, onclick: activate, onkeydown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } },
     },
     stackOf(step),
     s('rect', { class: 'node-box', width: NODE.width, height: NODE.height, rx: 8 }),
-    s('text', { class: 'node-title', x: 12, y: 22 }, truncate(step.id, 22)),
+    s('text', { class: 'node-title', x: 12, y: 22 }, truncate(step.id, step.when ? 19 : 22)),
     s('text', { class: 'node-sub', x: 12, y: 41 }, truncate(stepLabel(step), step.forEach ? 17 : 26)),
     step.forEach ? s('text', { class: 'node-each', x: NODE.width - 10, y: 41, 'text-anchor': 'end' }, forEachMark(step.forEach)) : null,
+    step.when ? s('text', { class: 'node-when', x: NODE.width - 10, y: 22, 'text-anchor': 'end' }, 'if') : null,
     problems ? s('circle', { class: 'node-alert', cx: NODE.width - 12, cy: 12, r: 6 }) : null,
     s('title', {}, label));
   });
@@ -78,9 +86,13 @@ export function renderSteps(model, ctx) {
   const cards = model.steps.map((st) => h('article', { class: ['card', ctx.problemsAt(st.pointer) ? 'has-problems' : null], 'data-pointer': st.pointer },
     h('h3', {}, h('button', { type: 'button', class: 'link', onclick: () => ctx.navigate(st.pointer) }, st.id), ' ', badge(TYPE_LABEL[st.type] ?? st.type, `type-${st.type}`),
       st.forEach ? [' ', badge('for each', 'for-each', 'iteration over a list (spec 5.6.4)')] : null,
+      st.when ? [' ', badge('conditional', 'when', 'runs only when its condition is true (spec 3.12)')] : null,
       st.extensions.map((x) => badge(x, 'ext', 'extension field (spec 3.3)'))),
     facts([
+      ['When', st.when ? h('code', {}, st.when) : undefined],
       ['For each', st.forEach ? forEachText(st.forEach) : undefined],
+      ['Workflow', st.workflow ? workflowText(st.workflow) : undefined],
+      ['Workflow inputs', st.workflow?.inputs],
       ['Agent', st.agent],
       ['Task', st.task],
       ['Command', st.command ? h('code', {}, st.command) : undefined],

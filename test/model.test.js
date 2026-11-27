@@ -11,7 +11,7 @@ const examplesDir = examplesOf('v1alpha1');
 const example = (name, dir = examplesDir) => readFileSync(dir + name, 'utf8');
 
 test('every manifest example of the specification builds a model', () => {
-  for (const version of ['v1alpha1', 'v1alpha2', 'v1alpha3']) {
+  for (const version of ['v1alpha1', 'v1alpha2', 'v1alpha3', 'v1alpha4']) {
     const dir = examplesOf(version);
     const files = readdirSync(dir).filter((f) => /\.(workflow|agent|policy|run)\.yaml$/.test(f));
     assert.ok(files.length >= 5, version);
@@ -60,6 +60,34 @@ test('v1alpha3: input steps and extensions objects of steps', () => {
   assert.deepEqual(m.steps[0].input, { message: 'Which?' });
   assert.deepEqual(m.steps[0].extensions, ['x-step']);
   assert.deepEqual(m.extensions.map((e) => e.pointer), ['/spec/workflow/0/extensions/x-step']);
+});
+
+test('cve-risk-then-fix (v1alpha4): conditional workflow step with its child workflow', () => {
+  const m = buildModel(parse(example('cve-risk-then-fix.yaml', examplesOf('v1alpha4'))));
+  assert.equal(m.governancePointer, '/spec');
+  assert.equal(m.version, '0.1.0');
+  const byId = Object.fromEntries(m.steps.map((s) => [s.id, s]));
+  assert.equal(byId.fix.type, 'workflow');
+  assert.equal(byId.fix.when, 'steps.risk.outputs.affected == true');
+  assert.deepEqual(byId.fix.workflow, {
+    ref: 'cve-fixer',
+    version: '^0.5.0',
+    inputs: { repository: '${{ inputs.repository }}', cve: '${{ inputs.cve }}' },
+    wait: true,
+  });
+  assert.equal(byId.report.when, undefined);
+  assert.equal(byId.report.workflow, undefined);
+  assert.deepEqual(m.graph.nodes.map((n) => n.level), [0, 1, 1]);
+  assert.deepEqual(m.actions.find((a) => a.action === 'workflow.start').exposedTo, ['step fix']);
+});
+
+test('workflow step: wait defaults to true, malformed payloads are tolerated', () => {
+  const step = (workflow) => buildModel({ apiVersion: 'awp.agenticworkflowprotocol.org/v1alpha4', kind: 'Workflow', metadata: { name: 'x' }, spec: { workflow: [{ id: 'a', type: 'workflow', when: 'true', workflow }] } }).steps[0];
+  assert.deepEqual(step({ ref: 'child' }).workflow, { ref: 'child', version: undefined, inputs: undefined, wait: true });
+  assert.equal(step({ ref: 'child', wait: false }).workflow.wait, false);
+  assert.equal(step('child').workflow, undefined);
+  assert.equal(step({ ref: 1, inputs: [] }).workflow.ref, undefined);
+  assert.equal(step({}).when, 'true');
 });
 
 test('forEach without concurrency defaults to one item at a time', () => {
