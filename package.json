@@ -1,6 +1,6 @@
 {
   "name": "@agenticworkflowprotocol/editor",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Viewer and editor for Agentic Workflow Protocol (AWP) manifests: step graph, agents, tools, permissions, approvals and budgets at a glance, with live validation. Embeddable like Swagger UI; runs entirely in the browser.",
   "license": "Apache-2.0",
   "type": "module",

@@ -63,6 +63,8 @@ function stepOf(s, i) {
     approval: isObj(s.approval) ? s.approval : undefined,
     input: isObj(s.input) ? s.input : undefined,
     forEach: forEachOf(s.forEach),
+    when: str(s.when),
+    workflow: workflowCallOf(s.workflow),
     // v1alpha1/v1alpha2: x- keys on the step; v1alpha3: keys of the step's `extensions` object.
     extensions: [...Object.keys(s).filter((k) => k.startsWith('x-')), ...Object.keys(isObj(s.extensions) ? s.extensions : {})],
   };
@@ -76,6 +78,17 @@ function forEachOf(f) {
     items: items ?? '?',
     maxItems: typeof f.maxItems === 'number' ? f.maxItems : undefined,
     concurrency: typeof f.concurrency === 'number' ? f.concurrency : 1,
+  };
+}
+
+/** Child workflow of a `type: workflow` step (v1alpha4 spec 5.6.6); `wait` defaults to true. */
+function workflowCallOf(w) {
+  if (!isObj(w)) return undefined;
+  return {
+    ref: str(w.ref),
+    version: str(w.version),
+    inputs: isObj(w.inputs) ? w.inputs : undefined,
+    wait: w.wait !== false,
   };
 }
 
@@ -127,6 +140,8 @@ export function actionsOf({ agents, steps, spec }) {
     if (a.form === 'remote') add(`a2a.${a.id}.send`, a.id, 'listed');
   }
   for (const s of steps) if (s.type === 'command') add('shell.execute', `step ${s.id}`, 'listed');
+  // Starting the child execution of a workflow step is an action (v1alpha4 spec 5.6.6).
+  for (const s of steps) if (s.type === 'workflow') add('workflow.start', `step ${s.id}`, 'listed');
 
   return [...rows.values()].sort((x, y) => x.action.localeCompare(y.action)).map((row) => {
     const perAgent = row.exposedTo.map((by) => {
@@ -161,7 +176,7 @@ function governanceOf(spec) {
   return keys.filter((k) => spec[k] !== undefined).map((k) => ({ key: k, pointer: `/spec/${k}`, value: spec[k] }));
 }
 
-const KRM_VERSIONS = ['v1alpha3'];
+const KRM_VERSIONS = ['v1alpha3', 'v1alpha4'];
 
 /** Whether the governance fields of a document are in spec (v1alpha3 and later). */
 function usesSpecGovernance(doc) {

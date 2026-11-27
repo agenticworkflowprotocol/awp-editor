@@ -134,6 +134,18 @@ const viewerText = (p, selector) => p.evaluate((sel) => {
   await close();
 }
 {
+  // v1alpha4 (next draft): conditional workflow step with the called workflow on the node.
+  const { p, errors, close } = await page('viewer.html?url=examples/v1alpha4/cve-risk-then-fix.yaml');
+  await p.waitForFunction(() => document.querySelector('awp-viewer')?.shadowRoot?.querySelector('.title'));
+  check((await viewerText(p, '.node.type-workflow .node-sub')).join() === 'workflow cve-fixer', 'workflow step shows the called workflow');
+  const label = await p.evaluate(() => document.querySelector('awp-viewer').shadowRoot.querySelector('.node.conditional').getAttribute('aria-label'));
+  check(label.includes('only when steps.risk.outputs.affected == true'), 'conditional step has an accessible description');
+  check((await viewerText(p, '.badge.when')).length === 1, 'step card has a conditional badge');
+  check((await viewerText(p, '.head .badge')).some((t) => t.startsWith('valid')), 'v1alpha4 example is valid');
+  check(errors.length === 0, 'viewer renders v1alpha4 without errors');
+  await close();
+}
+{
   const { p, errors, close } = await page('embed.html');
   await p.waitForFunction(() => document.querySelector('awp-viewer')?.shadowRoot?.querySelector('.title'));
   check(errors.length === 0, 'embed page renders the live example without errors');
@@ -142,7 +154,7 @@ const viewerText = (p, selector) => p.evaluate((sel) => {
 
 // 3. Accessibility of every page in both colour schemes (axe needs an inline script: bypass CSP).
 for (const colorScheme of ['light', 'dark']) {
-  for (const path of ['', 'viewer.html?url=examples/vulnerability-fixer.workflow.yaml', 'viewer.html?url=examples/v1alpha2/image-review.workflow.yaml', 'viewer.html?url=examples/vulnerability-fixer.run.yaml', 'embed.html']) {
+  for (const path of ['', 'viewer.html?url=examples/vulnerability-fixer.workflow.yaml', 'viewer.html?url=examples/v1alpha2/image-review.workflow.yaml', 'viewer.html?url=examples/vulnerability-fixer.run.yaml', 'viewer.html?url=examples/v1alpha4/cve-risk-then-fix.yaml', 'embed.html']) {
     const context = await browser.newContext({ colorScheme, bypassCSP: true });
     const p = await context.newPage();
     await p.goto(base + path);

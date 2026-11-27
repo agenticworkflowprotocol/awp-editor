@@ -49,6 +49,10 @@ export interface Model {
     input?: Record<string, unknown>;
     /** Iteration (v1alpha2 spec 5.6.4, v1alpha3 spec 5.6.5): `items` without `${{ }}`, for example `steps.images.outputs.refs`. */
     forEach?: { items: string; maxItems?: number; concurrency: number };
+    /** Condition of the step (v1alpha4 spec 3.12), for example `steps.risk.outputs.affected == true`. */
+    when?: string;
+    /** Child workflow of a `type: workflow` step (v1alpha4 spec 5.6.6); `wait` defaults to true. */
+    workflow?: { ref?: string; version?: string; inputs?: Record<string, unknown>; wait: boolean };
     [key: string]: unknown;
   }[];
   graph: { nodes: { id: string; level: number; x: number; y: number }[]; edges: { from: string; to: string }[]; width: number; height: number };

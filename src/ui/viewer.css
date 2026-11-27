@@ -62,6 +62,7 @@ pre { margin: 0; white-space: pre-wrap; word-break: break-word; background: var(
 .badge.kind { color: var(--awp-accent); border-color: var(--awp-accent); background: transparent; }
 .badge.ext { font-family: var(--awp-mono); font-weight: 500; }
 .badge.for-each { color: var(--awp-accent); border-color: var(--awp-accent); background: transparent; }
+.badge.when { color: var(--awp-warn); border-color: var(--awp-warn); background: transparent; }
 .badge + .badge { margin-left: 0.3rem; }
 
 .section { margin-top: 1.5rem; }
@@ -89,6 +90,7 @@ h3 button.link { font-weight: 700; }
 .node-box { fill: var(--awp-bg); stroke: var(--awp-line); stroke-width: 1.5; }
 .node.type-command .node-box { stroke-dasharray: 5 3; }
 .node.type-approval .node-box { stroke: var(--awp-warn); }
+.node.type-workflow .node-box { stroke-width: 3; }
 .node.has-problems .node-box { stroke: var(--awp-bad); }
 .node:hover .node-box, .node:focus-visible .node-box { stroke: var(--awp-accent); stroke-width: 2.5; }
 .node:focus-visible { outline: none; }
@@ -98,6 +100,7 @@ h3 button.link { font-weight: 700; }
 .node-alert { fill: var(--awp-bad); }
 /* Iterating step (spec 5.6.4): stacked cards and a bound such as "each ≤20". */
 .node-stack { fill: var(--awp-panel); stroke: var(--awp-line); stroke-width: 1.5; }
+.node-when { font-size: 11px; font-weight: 700; fill: var(--awp-warn); font-family: var(--awp-mono); }
 .node-each { font-size: 11px; font-weight: 600; fill: var(--awp-accent); font-family: var(--awp-mono); }
 
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 0.75rem; }
