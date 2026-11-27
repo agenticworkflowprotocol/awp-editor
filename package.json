@@ -54,7 +54,7 @@
     "prepack": "node scripts/build.mjs"
   },
   "dependencies": {
-    "@agenticworkflowprotocol/validator": "0.3.0",
+    "@agenticworkflowprotocol/validator": "0.4.0",
     "yaml": "2.9.1"
   },
   "devDependencies": {
