@@ -80,8 +80,14 @@ const viewerText = (p, selector) => p.evaluate((sel) => {
   check((await viewerText(p, '.node')).length === 3, 'example vulnerability-fixer has three steps');
   check((await viewerText(p, '#awp-actions tbody tr')).length > 3, 'tools and permissions table is filled');
 
-  // The examples at the top level are the current draft v1alpha3: version from spec, valid.
-  check((await p.locator('awp-editor').evaluate((el) => el.value)).includes('/v1alpha3'), 'the top-level examples are v1alpha3');
+  // The examples at the top level are the current draft v1alpha4: version from spec, valid.
+  check((await p.locator('awp-editor').evaluate((el) => el.value)).includes('/v1alpha4'), 'the top-level examples are v1alpha4');
+  check((await viewerText(p, '.title .version')).join().trim() !== '', 'v1alpha4 example shows its version from spec');
+  check((await viewerText(p, '.head .badge')).some((t) => t.startsWith('valid')), 'v1alpha4 example is valid');
+
+  // Older versions stay supported: a v1alpha3 example from the subfolder, version from spec, valid.
+  await p.selectOption('#example', 'v1alpha3/vulnerability-fixer.workflow.yaml');
+  await p.waitForFunction(() => document.querySelector('awp-editor').shadowRoot.querySelector('awp-viewer').shadowRoot.querySelector('.api')?.textContent.endsWith('/v1alpha3'));
   check((await viewerText(p, '.title .version')).join().trim() !== '', 'v1alpha3 example shows its version from spec');
   check((await viewerText(p, '.head .badge')).some((t) => t.startsWith('valid')), 'v1alpha3 example is valid');
 
@@ -124,8 +130,7 @@ const viewerText = (p, selector) => p.evaluate((sel) => {
   await close();
 }
 {
-  // v1alpha3 WorkflowRun: namespace and referenced workflow in the facts. The examples/v1alpha3/
-  // path is kept for links from the time v1alpha3 was a proposed draft.
+  // v1alpha3 WorkflowRun: namespace and referenced workflow in the facts.
   const { p, errors, close } = await page('viewer.html?url=examples/v1alpha3/vulnerability-fixer.run.yaml');
   await p.waitForFunction(() => document.querySelector('awp-viewer')?.shadowRoot?.querySelector('.title'));
   const text = await p.evaluate(() => document.querySelector('awp-viewer').shadowRoot.textContent);
@@ -134,8 +139,9 @@ const viewerText = (p, selector) => p.evaluate((sel) => {
   await close();
 }
 {
-  // v1alpha4 (next draft): conditional workflow step with the called workflow on the node.
-  const { p, errors, close } = await page('viewer.html?url=examples/v1alpha4/cve-risk-then-fix.yaml');
+  // v1alpha4 (current draft): conditional workflow step with the called workflow on the node. The
+  // examples/v1alpha4/ path is kept for links from the time v1alpha4 was the next draft.
+  const { p, errors, close } = await page('viewer.html?url=examples/cve-risk-then-fix.yaml');
   await p.waitForFunction(() => document.querySelector('awp-viewer')?.shadowRoot?.querySelector('.title'));
   check((await viewerText(p, '.node.type-workflow .node-sub')).join() === 'workflow cve-fixer', 'workflow step shows the called workflow');
   const label = await p.evaluate(() => document.querySelector('awp-viewer').shadowRoot.querySelector('.node.conditional').getAttribute('aria-label'));
@@ -143,6 +149,13 @@ const viewerText = (p, selector) => p.evaluate((sel) => {
   check((await viewerText(p, '.badge.when')).length === 1, 'step card has a conditional badge');
   check((await viewerText(p, '.head .badge')).some((t) => t.startsWith('valid')), 'v1alpha4 example is valid');
   check(errors.length === 0, 'viewer renders v1alpha4 without errors');
+  await close();
+}
+{
+  const { p, errors, close } = await page('viewer.html?url=examples/v1alpha4/cve-risk-then-fix.yaml');
+  await p.waitForFunction(() => document.querySelector('awp-viewer')?.shadowRoot?.querySelector('.title'));
+  check((await viewerText(p, '.head .badge')).some((t) => t.startsWith('valid')), 'examples/v1alpha4/ still serves the v1alpha4 examples');
+  check(errors.length === 0, 'viewer renders examples/v1alpha4/ without errors');
   await close();
 }
 {
@@ -154,7 +167,7 @@ const viewerText = (p, selector) => p.evaluate((sel) => {
 
 // 3. Accessibility of every page in both colour schemes (axe needs an inline script: bypass CSP).
 for (const colorScheme of ['light', 'dark']) {
-  for (const path of ['', 'viewer.html?url=examples/vulnerability-fixer.workflow.yaml', 'viewer.html?url=examples/v1alpha2/image-review.workflow.yaml', 'viewer.html?url=examples/vulnerability-fixer.run.yaml', 'viewer.html?url=examples/v1alpha4/cve-risk-then-fix.yaml', 'embed.html']) {
+  for (const path of ['', 'viewer.html?url=examples/vulnerability-fixer.workflow.yaml', 'viewer.html?url=examples/v1alpha2/image-review.workflow.yaml', 'viewer.html?url=examples/v1alpha3/vulnerability-fixer.run.yaml', 'viewer.html?url=examples/cve-risk-then-fix.yaml', 'embed.html']) {
     const context = await browser.newContext({ colorScheme, bypassCSP: true });
     const p = await context.newPage();
     await p.goto(base + path);

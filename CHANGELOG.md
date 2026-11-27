@@ -8,7 +8,7 @@ All notable changes are documented in this file. The format is based on
 
 ### Added
 
-- AWP `v1alpha4`, the next draft (decision D23 of the specification). Step conditions (`when`,
+- AWP `v1alpha4` (decision D23 of the specification). Step conditions (`when`,
   spec 3.12): the view model carries `when`; the graph marks a conditional step with `if` and
   names the condition in the accessible name; the step card gets a "conditional" badge and a
   "When" fact. Workflow steps (`type: workflow`, spec 5.6.6): the view model carries `workflow`
@@ -16,9 +16,16 @@ All notable changes are documented in this file. The format is based on
   the step card shows the child workflow and its inputs; the step exposes the action
   `workflow.start`.
 - Governance fields of `v1alpha4` manifests are read from `spec`, as in `v1alpha3`.
-- The website lists the `v1alpha4` examples under `examples/v1alpha4/`; `v1alpha3` stays the
-  current draft at `examples/`.
 - Requires `@agenticworkflowprotocol/validator` 0.4.0 (`v1alpha4`).
+
+### Changed
+
+- `v1alpha4` is the current draft (decision D24 of the specification). The website starts with a
+  `v1alpha4` manifest, and `examples/<file>` now serves the `v1alpha4` examples; the `v1alpha3`
+  examples moved to `examples/v1alpha3/<file>` and are listed as an older set.
+  `examples/v1alpha4/<file>` still works but is no longer listed.
+- Viewer and editor show `v1alpha1` to `v1alpha3` manifests as before; the browser test checks a
+  `v1alpha3` example explicitly.
 
 ## [0.3.0] - 2026-11-25
 

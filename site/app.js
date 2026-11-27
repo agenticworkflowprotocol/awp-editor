@@ -3,7 +3,7 @@
 import { buildModel, parseYaml as parse } from './lib/awp-editor.mjs';
 import { decodeShare, encodeShare } from './share.js';
 
-const STARTER = `apiVersion: awp.agenticworkflowprotocol.org/v1alpha3
+const STARTER = `apiVersion: awp.agenticworkflowprotocol.org/v1alpha4
 kind: Workflow
 metadata:
   name: hello-workflow
